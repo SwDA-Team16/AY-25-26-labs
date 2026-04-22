@@ -11,4 +11,9 @@
 *.code-workspace
 
 # MZinga local clone
-mzinga/
+# mzinga/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
