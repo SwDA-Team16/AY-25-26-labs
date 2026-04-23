@@ -193,3 +193,5 @@ src/generated-schema.graphql
 
 # tmp
 tmp
+
+docker-compose.yml
