@@ -176,6 +176,14 @@ const Communications: CollectionConfig = {
             MZingaLogger.Instance?.error(`[Communications:err] ${err}`);
           }
 
+          await payload.update({
+            collection: Slugs.Communications,
+            id: doc.id,
+            data: {
+              status: "failed",
+            },
+          });
+
           throw err;
         }
       },
