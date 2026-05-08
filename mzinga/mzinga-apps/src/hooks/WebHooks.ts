@@ -57,6 +57,7 @@ export class WebHooks {
       `HOOKSURL_${collectionSlug}_FIELD_${fieldName}`
     );
   }
+  // [Lab 2 - Step B1] Understaing how env variables are being read
   AddHooksFromList(
     allHooksList: string[],
     originalHooks: any,

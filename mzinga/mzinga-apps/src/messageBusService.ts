@@ -26,6 +26,7 @@ const BusConfiguration = {
     internal: true,
   },
 };
+// [Lab 2 - Step B1] Understanding publishing events to RabbitMQ from hooks
 class MessageBusService {
   private connection: Connection | null = null;
   private publisher: Publisher = null;

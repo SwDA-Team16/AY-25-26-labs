@@ -18,9 +18,8 @@ const Communications: CollectionConfig = {
     delete: () => {
       return false;
     },
-    update: () => {
-      return false;
-    },
+    // [Lab 2 - Step A1] Fix the update access rule
+    update: access.GetIsAdmin,
   },
   admin: {
     ...collectionUtils.GeneratePreviewConfig(),
