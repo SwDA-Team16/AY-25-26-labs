@@ -17,3 +17,6 @@
 .venv/
 __pycache__/
 *.pyc
+
+# env files
+lab2/lab2-worker-rest/polling/.env
