@@ -20,3 +20,4 @@ __pycache__/
 
 # env files
 lab2/lab2-worker-rest/polling/.env
+lab3/lab3-worker-observable/.env

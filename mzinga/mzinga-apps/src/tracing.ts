@@ -27,6 +27,9 @@ const DISABLE_TRACING = (process.env.DISABLE_TRACING || "0") == "1";
 function main() {
   const OTEL_LOG_LEVEL = process.env.OTEL_LOG_LEVEL || DiagLogLevel.INFO;
   diag.setLogger(new DiagConsoleLogger(), OTEL_LOG_LEVEL as DiagLogLevel);
+  
+  // [Lab 3 - Step 1.3] If DISABLE_TRACING=1 is set in the .env file, tracing is completely disabled.
+  // No provider, exporter, or auto-instrumentation will be initialized.
   if (DISABLE_TRACING) {
     diag.info("Tracing is DISABLED");
     return;
@@ -68,11 +71,17 @@ function main() {
   if (process.env.OTEL_CONSOLE_EXPORTER) {
     spanProcessors.push(new BatchSpanProcessor(new LokiExporter()));
   }
+
+  // [Lab 3 - Step 1.3] NodeTracerProvider is configured with a BatchSpanProcessor and OTLPTraceExporter.
+  // This collects spans and sends them in batches to Jaeger via OTLP.
   const tracerProvider = new NodeTracerProvider({
     resource,
     spanProcessors: spanProcessors,
   });
 
+  // [Lab 3 - Step 1.3] Enable auto-instrumentation for Express, MongoDB, Mongoose, HTTP, etc.
+  // This automatically generates spans for each HTTP request, MongoDB query, etc.
+  // No manual span creation is needed for these libraries.
   registerInstrumentations({
     tracerProvider: tracerProvider,
     instrumentations: [
