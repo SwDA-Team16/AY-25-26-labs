@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mzinga-lab3.fullname" . }}-jaeger
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mzinga-lab3.labels" . | nindent 4 }}
+    app.kubernetes.io/component: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: jaeger
+  template:
+    metadata:
+      labels:
+        {{- include "mzinga-lab3.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: jaeger
+    spec:
+      containers:
+        - name: jaeger
+          image: "{{ .Values.jaeger.image.repository }}:{{ .Values.jaeger.image.tag }}"
+          imagePullPolicy: {{ .Values.jaeger.image.pullPolicy }}
+          ports:
+            - name: ui
+              containerPort: {{ .Values.jaeger.service.uiPort }}
+            - name: otlp-grpc
+              containerPort: {{ .Values.jaeger.service.otlpGrpcPort }}
+            - name: otlp-http
+              containerPort: {{ .Values.jaeger.service.otlpHttpPort }}
+          env:
+            - name: COLLECTOR_OTLP_ENABLED
+              value: "true"
+

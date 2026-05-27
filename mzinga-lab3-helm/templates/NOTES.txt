@@ -1,0 +1,13 @@
+MZinga Lab 3 has been rendered as release {{ .Release.Name }} in namespace {{ .Release.Namespace }}.
+
+Useful commands after installation:
+
+  kubectl get pods -n {{ .Release.Namespace }}
+
+  kubectl port-forward service/{{ include "mzinga-lab3.fullname" . }}-mzinga-apps 3000:{{ .Values.mzingaApps.service.port }} -n {{ .Release.Namespace }}
+  kubectl port-forward service/{{ include "mzinga-lab3.fullname" . }}-jaeger 16686:{{ .Values.jaeger.service.uiPort }} -n {{ .Release.Namespace }}
+  kubectl port-forward service/{{ include "mzinga-lab3.fullname" . }}-email-worker 8000:{{ .Values.emailWorker.service.prometheusPort }} -n {{ .Release.Namespace }}
+{{- if .Values.mailhog.enabled }}
+  kubectl port-forward service/{{ include "mzinga-lab3.fullname" . }}-mailhog 8025:{{ .Values.mailhog.service.uiPort }} -n {{ .Release.Namespace }}
+{{- end }}
+

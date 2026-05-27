@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mzinga-lab3.fullname" . }}-mzinga-apps
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mzinga-lab3.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mzinga-apps
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: mzinga-apps
+  ports:
+    - name: http
+      port: {{ .Values.mzingaApps.service.port }}
+      targetPort: http
+

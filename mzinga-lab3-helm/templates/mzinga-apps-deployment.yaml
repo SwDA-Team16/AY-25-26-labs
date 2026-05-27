@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mzinga-lab3.fullname" . }}-mzinga-apps
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mzinga-lab3.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mzinga-apps
+spec:
+  replicas: {{ .Values.mzingaApps.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: mzinga-apps
+  template:
+    metadata:
+      labels:
+        {{- include "mzinga-lab3.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mzinga-apps
+    spec:
+      containers:
+        - name: mzinga-apps
+          image: "{{ .Values.mzingaApps.image.repository }}:{{ .Values.mzingaApps.image.tag }}"
+          imagePullPolicy: {{ .Values.mzingaApps.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.mzingaApps.service.port }}
+          env:
+            - name: MONGODB_URI
+              value: {{ include "mzinga-lab3.mongodbUri" . | quote }}
+            - name: RABBITMQ_URL
+              value: {{ include "mzinga-lab3.rabbitmqUrl" . | quote }}
+            - name: REDIS_URI
+              value: {{ include "mzinga-lab3.redisUri" . | quote }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://{{ include "mzinga-lab3.fullname" . }}-jaeger:{{ .Values.jaeger.service.otlpHttpPort }}"
+            - name: OTEL_SERVICE_NAME
+              value: "mzinga-apps"
+            - name: PAYLOAD_SECRET
+              value: {{ .Values.mzingaApps.env.payloadSecret | quote }}
+            - name: TENANT
+              value: {{ .Values.mzingaApps.env.tenantId | quote }}
+            - name: ENV
+              value: {{ .Values.mzingaApps.env.environment | quote }}
+            - name: CORS_CONFIGS
+              value: {{ .Values.mzingaApps.env.corsConfigs | quote }}
+            - name: COMMUNICATIONS_EXTERNAL_WORKER
+              value: {{ .Values.mzingaApps.env.communicationsExternalWorker | quote }}
+            - name: DISABLE_TRACING
+              value: {{ .Values.mzingaApps.env.disableTracing | quote }}
+            - name: OTEL_CONSOLE_EXPORTER
+              value: {{ .Values.mzingaApps.env.otelConsoleExporter | quote }}
+            - name: JSON_LIMITS_SIZE
+              value: {{ .Values.mzingaApps.env.jsonLimitsSize | quote }}
+            - name: PAYLOAD_PUBLIC_SERVER_URL
+              value: {{ default (printf "http://%s-mzinga-apps:%v" (include "mzinga-lab3.fullname" .) .Values.mzingaApps.service.port) .Values.mzingaApps.env.publicServerUrl | quote }}
+            - name: PAYLOAD_PUBLIC_CONFIG_SERVER_URL
+              value: {{ default (printf "http://%s-mzinga-apps:%v" (include "mzinga-lab3.fullname" .) .Values.mzingaApps.service.port) .Values.mzingaApps.env.publicServerUrl | quote }}
+            - name: PAYLOAD_PUBLIC_ENABLE_ZITADEL_PLUGIN
+              value: {{ .Values.mzingaApps.env.enableZitadelPlugin | quote }}
+            {{- if .Values.mzingaApps.env.hooksUrlCommunicationsAfterChange }}
+            - name: HOOKSURL_COMMUNICATIONS_AFTERCHANGE
+              value: {{ .Values.mzingaApps.env.hooksUrlCommunicationsAfterChange | quote }}
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /probes/api/health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /probes/api/health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 6

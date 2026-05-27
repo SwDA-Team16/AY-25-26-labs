@@ -1,0 +1,22 @@
+{{- if .Values.mailhog.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mzinga-lab3.fullname" . }}-mailhog
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mzinga-lab3.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mailhog
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: mailhog
+  ports:
+    - name: smtp
+      port: {{ .Values.mailhog.service.smtpPort }}
+      targetPort: smtp
+    - name: ui
+      port: {{ .Values.mailhog.service.uiPort }}
+      targetPort: ui
+{{- end }}
+

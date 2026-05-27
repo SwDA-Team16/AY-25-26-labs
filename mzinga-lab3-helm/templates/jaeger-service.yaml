@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mzinga-lab3.fullname" . }}-jaeger
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mzinga-lab3.labels" . | nindent 4 }}
+    app.kubernetes.io/component: jaeger
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: jaeger
+  ports:
+    - name: ui
+      port: {{ .Values.jaeger.service.uiPort }}
+      targetPort: ui
+    - name: otlp-grpc
+      port: {{ .Values.jaeger.service.otlpGrpcPort }}
+      targetPort: otlp-grpc
+    - name: otlp-http
+      port: {{ .Values.jaeger.service.otlpHttpPort }}
+      targetPort: otlp-http
+

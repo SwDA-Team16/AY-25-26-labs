@@ -1,0 +1,78 @@
+mzingaApps:
+  image:
+    repository: newesissrl.azurecr.io/mzinga/payload/gh/backoffice
+    tag: "0.9.3"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    port: 3000
+  env:
+    tenantId: "mzinga"
+    environment: "prod"
+    payloadSecret: "change-me-for-production"
+    corsConfigs: "*"
+    communicationsExternalWorker: "true"
+    hooksUrlCommunicationsAfterChange: ""
+    publicServerUrl: ""
+    jsonLimitsSize: "20mb"
+    disableTracing: "0"
+    otelConsoleExporter: "1"
+    enableZitadelPlugin: "0"
+
+emailWorker:
+  image:
+    repository: lab3-email-worker
+    tag: "1.0.0"
+    pullPolicy: Never
+  replicaCount: 1
+  service:
+    prometheusPort: 8000
+  credentials:
+    email: ""
+    password: ""
+  env:
+    pollIntervalSeconds: "5"
+    emailFrom: "worker@mzinga.io"
+    otlpServiceName: "email-worker"
+    smtpHost: ""
+    smtpPort: "1025"
+
+jaeger:
+  image:
+    repository: jaegertracing/all-in-one
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    uiPort: 16686
+    otlpGrpcPort: 4317
+    otlpHttpPort: 4318
+
+mailhog:
+  enabled: true
+  image:
+    repository: mailhog/mailhog
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    smtpPort: 1025
+    uiPort: 8025
+
+mongodb:
+  auth:
+    enabled: false
+  persistence:
+    enabled: false
+
+rabbitmq:
+  auth:
+    username: "mzinga"
+    password: "mzinga"
+  persistence:
+    enabled: false
+
+redis:
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: false

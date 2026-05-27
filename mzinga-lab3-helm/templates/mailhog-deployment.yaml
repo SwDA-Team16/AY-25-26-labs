@@ -1,0 +1,32 @@
+{{- if .Values.mailhog.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mzinga-lab3.fullname" . }}-mailhog
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mzinga-lab3.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mailhog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: mailhog
+  template:
+    metadata:
+      labels:
+        {{- include "mzinga-lab3.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mailhog
+    spec:
+      containers:
+        - name: mailhog
+          image: "{{ .Values.mailhog.image.repository }}:{{ .Values.mailhog.image.tag }}"
+          imagePullPolicy: {{ .Values.mailhog.image.pullPolicy }}
+          ports:
+            - name: smtp
+              containerPort: {{ .Values.mailhog.service.smtpPort }}
+            - name: ui
+              containerPort: {{ .Values.mailhog.service.uiPort }}
+{{- end }}
+

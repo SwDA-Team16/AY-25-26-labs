@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mzinga-lab3.fullname" . }}-email-worker
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mzinga-lab3.labels" . | nindent 4 }}
+    app.kubernetes.io/component: email-worker
+spec:
+  replicas: {{ .Values.emailWorker.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: email-worker
+  template:
+    metadata:
+      labels:
+        {{- include "mzinga-lab3.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: email-worker
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.emailWorker.service.prometheusPort | quote }}
+    spec:
+      containers:
+        - name: email-worker
+          image: "{{ .Values.emailWorker.image.repository }}:{{ .Values.emailWorker.image.tag }}"
+          imagePullPolicy: {{ .Values.emailWorker.image.pullPolicy }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.emailWorker.service.prometheusPort }}
+          env:
+            - name: MZINGA_URL
+              value: "http://{{ include "mzinga-lab3.fullname" . }}-mzinga-apps:{{ .Values.mzingaApps.service.port }}"
+            - name: MZINGA_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mzinga-lab3.fullname" . }}-worker-credentials
+                  key: mzinga-email
+            - name: MZINGA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mzinga-lab3.fullname" . }}-worker-credentials
+                  key: mzinga-password
+            - name: POLL_INTERVAL_SECONDS
+              value: {{ .Values.emailWorker.env.pollIntervalSeconds | quote }}
+            - name: SMTP_HOST
+              value: {{ include "mzinga-lab3.smtpHost" . | quote }}
+            - name: SMTP_PORT
+              value: {{ .Values.emailWorker.env.smtpPort | quote }}
+            - name: EMAIL_FROM
+              value: {{ .Values.emailWorker.env.emailFrom | quote }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://{{ include "mzinga-lab3.fullname" . }}-jaeger:{{ .Values.jaeger.service.otlpHttpPort }}"
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.emailWorker.env.otlpServiceName | quote }}
+            - name: PROMETHEUS_PORT
+              value: {{ .Values.emailWorker.service.prometheusPort | quote }}
+
