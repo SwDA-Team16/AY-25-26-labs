@@ -43,6 +43,16 @@ spec:
                   key: mzinga-password
             - name: POLL_INTERVAL_SECONDS
               value: {{ .Values.emailWorker.env.pollIntervalSeconds | quote }}
+            {{- if eq .Values.emailWorker.mode "rabbitmq" }}
+            - name: RABBITMQ_URL
+              value: {{ include "mzinga-lab3.rabbitmqUrl" . | quote }}
+            - name: ROUTING_KEY
+              value: {{ .Values.emailWorker.env.routingKey | quote }}
+            - name: EXCHANGE_NAME
+              value: {{ .Values.emailWorker.env.exchangeName | quote }}
+            - name: QUEUE_NAME
+              value: {{ .Values.emailWorker.env.queueName | quote }}
+            {{- end }}
             - name: SMTP_HOST
               value: {{ include "mzinga-lab3.smtpHost" . | quote }}
             - name: SMTP_PORT
@@ -55,4 +65,3 @@ spec:
               value: {{ .Values.emailWorker.env.otlpServiceName | quote }}
             - name: PROMETHEUS_PORT
               value: {{ .Values.emailWorker.service.prometheusPort | quote }}
-

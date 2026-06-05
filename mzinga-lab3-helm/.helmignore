@@ -1,8 +1,5 @@
 .git/
 .gitignore
 .DS_Store
-charts/
-*.tgz
 *.swp
 *.tmp
-

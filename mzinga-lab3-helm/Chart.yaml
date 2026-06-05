@@ -3,19 +3,10 @@ name: mzinga-lab3
 description: MZinga Lab 3 observable email worker with Kubernetes infrastructure
 type: application
 version: 1.0.0
-appVersion: "0.9.3"
+appVersion: "0.34.7"
 
 dependencies:
   - name: mongodb
-    version: "15.x.x"
+    version: "19.1.0"
     repository: "https://charts.bitnami.com/bitnami"
     alias: mongodb
-  - name: rabbitmq
-    version: "14.x.x"
-    repository: "https://charts.bitnami.com/bitnami"
-    alias: rabbitmq
-  - name: redis
-    version: "19.x.x"
-    repository: "https://charts.bitnami.com/bitnami"
-    alias: redis
-

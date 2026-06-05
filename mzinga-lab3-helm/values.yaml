@@ -1,8 +1,8 @@
 mzingaApps:
   image:
-    repository: newesissrl.azurecr.io/mzinga/payload/gh/backoffice
-    tag: "0.9.3"
-    pullPolicy: IfNotPresent
+    repository: mzinga-apps
+    tag: "local"
+    pullPolicy: Never
   replicaCount: 1
   service:
     port: 3000
@@ -13,13 +13,14 @@ mzingaApps:
     corsConfigs: "*"
     communicationsExternalWorker: "true"
     hooksUrlCommunicationsAfterChange: ""
-    publicServerUrl: ""
+    publicServerUrl: "http://localhost:3000"
     jsonLimitsSize: "20mb"
     disableTracing: "0"
     otelConsoleExporter: "1"
     enableZitadelPlugin: "0"
 
 emailWorker:
+  mode: "polling"
   image:
     repository: lab3-email-worker
     tag: "1.0.0"
@@ -36,6 +37,27 @@ emailWorker:
     otlpServiceName: "email-worker"
     smtpHost: ""
     smtpPort: "1025"
+    rabbitmqUrl: ""
+    routingKey: "HOOKSURL_COMMUNICATIONS_AFTERCHANGE"
+    exchangeName: "mzinga_events_durable"
+    queueName: "communications-email-worker"
+
+rabbitmq:
+  enabled: false
+  image:
+    repository: rabbitmq
+    tag: "3-management"
+    pullPolicy: IfNotPresent
+  waitImage:
+    repository: busybox
+    tag: "1.36"
+    pullPolicy: IfNotPresent
+  service:
+    amqpPort: 5672
+    managementPort: 15672
+  auth:
+    username: "guest"
+    password: "guest"
 
 jaeger:
   image:
@@ -62,17 +84,3 @@ mongodb:
     enabled: false
   persistence:
     enabled: false
-
-rabbitmq:
-  auth:
-    username: "mzinga"
-    password: "mzinga"
-  persistence:
-    enabled: false
-
-redis:
-  auth:
-    enabled: false
-  master:
-    persistence:
-      enabled: false

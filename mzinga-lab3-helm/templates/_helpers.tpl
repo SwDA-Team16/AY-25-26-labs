@@ -24,14 +24,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 mongodb://{{ include "mzinga-lab3.fullname" . }}-mongodb:27017/mzinga?directConnection=true
 {{- end -}}
 
-{{- define "mzinga-lab3.rabbitmqUrl" -}}
-amqp://{{ .Values.rabbitmq.auth.username }}:{{ .Values.rabbitmq.auth.password }}@{{ include "mzinga-lab3.fullname" . }}-rabbitmq:5672/
-{{- end -}}
-
-{{- define "mzinga-lab3.redisUri" -}}
-redis://{{ include "mzinga-lab3.fullname" . }}-redis-master:6379
-{{- end -}}
-
 {{- define "mzinga-lab3.smtpHost" -}}
 {{- if .Values.emailWorker.env.smtpHost -}}
 {{- .Values.emailWorker.env.smtpHost -}}
@@ -42,3 +34,10 @@ localhost
 {{- end -}}
 {{- end -}}
 
+{{- define "mzinga-lab3.rabbitmqUrl" -}}
+{{- if .Values.emailWorker.env.rabbitmqUrl -}}
+{{- .Values.emailWorker.env.rabbitmqUrl -}}
+{{- else -}}
+amqp://{{ .Values.rabbitmq.auth.username }}:{{ .Values.rabbitmq.auth.password }}@{{ include "mzinga-lab3.fullname" . }}-rabbitmq:{{ .Values.rabbitmq.service.amqpPort }}/
+{{- end -}}
+{{- end -}}

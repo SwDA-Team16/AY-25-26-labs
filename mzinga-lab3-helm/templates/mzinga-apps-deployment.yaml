@@ -18,6 +18,18 @@ spec:
         {{- include "mzinga-lab3.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: mzinga-apps
     spec:
+      {{- if .Values.rabbitmq.enabled }}
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: "{{ .Values.rabbitmq.waitImage.repository }}:{{ .Values.rabbitmq.waitImage.tag }}"
+          imagePullPolicy: {{ .Values.rabbitmq.waitImage.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z {{ include "mzinga-lab3.fullname" . }}-rabbitmq {{ .Values.rabbitmq.service.amqpPort }};
+              do echo "waiting for RabbitMQ"; sleep 2; done
+      {{- end }}
       containers:
         - name: mzinga-apps
           image: "{{ .Values.mzingaApps.image.repository }}:{{ .Values.mzingaApps.image.tag }}"
@@ -28,10 +40,6 @@ spec:
           env:
             - name: MONGODB_URI
               value: {{ include "mzinga-lab3.mongodbUri" . | quote }}
-            - name: RABBITMQ_URL
-              value: {{ include "mzinga-lab3.rabbitmqUrl" . | quote }}
-            - name: REDIS_URI
-              value: {{ include "mzinga-lab3.redisUri" . | quote }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: "http://{{ include "mzinga-lab3.fullname" . }}-jaeger:{{ .Values.jaeger.service.otlpHttpPort }}"
             - name: OTEL_SERVICE_NAME
@@ -52,6 +60,10 @@ spec:
               value: {{ .Values.mzingaApps.env.otelConsoleExporter | quote }}
             - name: JSON_LIMITS_SIZE
               value: {{ .Values.mzingaApps.env.jsonLimitsSize | quote }}
+            {{- if .Values.rabbitmq.enabled }}
+            - name: RABBITMQ_URL
+              value: {{ include "mzinga-lab3.rabbitmqUrl" . | quote }}
+            {{- end }}
             - name: PAYLOAD_PUBLIC_SERVER_URL
               value: {{ default (printf "http://%s-mzinga-apps:%v" (include "mzinga-lab3.fullname" .) .Values.mzingaApps.service.port) .Values.mzingaApps.env.publicServerUrl | quote }}
             - name: PAYLOAD_PUBLIC_CONFIG_SERVER_URL
