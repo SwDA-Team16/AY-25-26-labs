@@ -1,4 +1,4 @@
-## [Lab 1 — Step 2.3] Inspect the MongoDB document shape
+## [Lab 1 — Step 2.3] Inspect the MongoDB document shape 
 
 `db.communications.findOne()`:
 ```bash
