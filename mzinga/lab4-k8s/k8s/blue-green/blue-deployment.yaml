@@ -11,13 +11,13 @@ spec:
   selector:
     matchLabels:
       app: webapp
-
-      # [Lab 4 - Step 5.2] slot=blue identifies the current environment
       slot: blue
   template:
     metadata:
       labels:
         app: webapp
+
+        # [Lab 4 - Step 5.2] slot=blue identifies the current environment
         slot: blue
         version: v1
     spec:
