@@ -7,6 +7,8 @@ metadata:
     app: webapp
     track: stable
 spec:
+
+  # [Lab 4 - Step 6.2] Replica count determines traffic distribution
   replicas: 9        # 9 stable + 1 canary = ~10% canary traffic
   selector:
     matchLabels:
