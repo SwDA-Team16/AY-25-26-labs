@@ -4,6 +4,8 @@ metadata:
   name: webapp
   namespace: mzinga-lab4
 spec:
+
+  # [Lab 4 - Step 5.2] slot controls the blue-green traffic switch
   selector:
     app: webapp
     slot: blue        # change to "green" to switch all traffic to the green deployment
