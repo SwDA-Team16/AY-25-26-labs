@@ -4,6 +4,8 @@ metadata:
   name: webapp
   namespace: mzinga-lab4
 spec:
+
+  # [Lab 4 - Step 6.2] Omitting track sends traffic to both versions
   selector:
     app: webapp      # intentionally omits "track" — matches both stable and canary pods
   ports:
