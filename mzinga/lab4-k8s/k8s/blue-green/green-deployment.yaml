@@ -16,6 +16,8 @@ spec:
     metadata:
       labels:
         app: webapp
+
+        # [Lab 4 - Step 5.2] slot=green identifies the new environment
         slot: green
         version: v2
     spec:
