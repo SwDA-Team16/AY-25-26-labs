@@ -4,8 +4,12 @@ metadata:
   name: webapp
   namespace: mzinga-lab4
 spec:
+
+  # [Lab 4 - Step 2.1] Service finds Pods through matching labels
   selector:
     app: webapp
+
+  # [Lab 4 - Step 2.1] Service forwards port 80 to container port 8080
   ports:
     - port: 80
       targetPort: 8080
