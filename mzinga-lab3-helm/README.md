@@ -1,4 +1,4 @@
-# MZinga Lab 3 Helm Chart
+# MZinga Lab 3 Helm Chart 
 
 This chart packages the Lab 3 stack so it can be installed later as one Helm release:
 
