@@ -1,4 +1,4 @@
-# Lab 4
+# Lab 4 
 
 
 ## Step 1 — Build the Container Images 
