@@ -1,4 +1,4 @@
-## [Lab 2 - Step A4]
+## [Lab 2 - Step A4] 
 For more details inspect `worker.py`
 
 ### REST API worker started
