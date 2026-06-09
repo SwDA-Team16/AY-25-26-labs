@@ -8,12 +8,20 @@ metadata:
 spec:
   replicas: 3
   selector:
+
+    # [Lab 4 - Step 2.1] Deployment selector must match Pod labels
     matchLabels:
       app: webapp
+
+  # [Lab 4 - Step 2.1] RollingUpdate gradually replaces Pods
   strategy:
     type: RollingUpdate
     rollingUpdate:
+
+      # [Lab 4 - Step 2.1] maxUnavailable limits Pods taken offline
       maxUnavailable: 1
+
+      # [Lab 4 - Step 2.1] maxSurge allows temporary extra Pods
       maxSurge: 1
   template:
     metadata:
@@ -24,6 +32,8 @@ spec:
       containers:
         - name: webapp
           image: mzinga-webapp:1.0.0
+
+          # [Lab 4 - Step 2.1] Use local images loaded into minikube
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
@@ -32,6 +42,8 @@ spec:
               value: "1.0.0"
             - name: APP_COLOR
               value: "blue"
+
+          # [Lab 4 - Step 2.1] Readiness and liveness probes use /health
           readinessProbe:
             httpGet:
               path: /health
